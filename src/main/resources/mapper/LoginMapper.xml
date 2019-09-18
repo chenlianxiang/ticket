@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heheda.ticket.web.dao.login.LoginDao">
+
+
+    <!--保存登录日志-->
+    <insert id="saveLogin">
+
+       INSERT INTO tb_login(u_id,u_name,login_ip)VALUES
+       (
+          #{u_id},#{u_name},#{login_ip}
+       )
+    </insert>
+</mapper>

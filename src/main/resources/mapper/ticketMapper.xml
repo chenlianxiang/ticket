@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heheda.ticket.web.dao.ticket.TicketDao">
+
+    <sql id="queryTicket">
+        select b.train_type,b.train_no,b.train_simple,a.from_code,a.from_name,a.to_code,a.to_name,c.private,c.`first`,c.`second`,c.soft,a.date,a.time from tb_ticket a
+		left join tb_train b on a.train_id=b.train_id
+		left JOIN (
+		  select  ticket_id ,
+        SUM(IF(seat_code='hard',ticket_balance,0)) as 'hard',
+		    SUM(IF(seat_code='private',ticket_balance,0)) as 'private',
+		    SUM(IF(seat_code='first',ticket_balance,0)) as 'first',
+		    SUM(IF(seat_code='second',ticket_balance,0)) as 'second',
+		    SUM(IF(seat_code='soft',ticket_balance,0)) as 'soft'
+	     from (
+			   select a.*,b.seat_type,b.seat_name,b.seat_code
+		     from tb_balance  a
+		     left join tb_seat b on b.seat_id=a.seat_id) as  d
+		     GROUP BY ticket_id		)
+				 c on c.ticket_id=a.ticket_id
+
+    </sql>
+
+    <select id="queryTicket" resultType="com.heheda.ticket.web.vo.ticket.ticketVO" parameterType="com.heheda.ticket.web.vo.ticket.ticketVO">
+        <include refid="queryTicket"/>
+
+        <where>
+            <if test="from_name!=null and from_name!=''">
+                and a.from_name='上海虹桥'
+            </if>
+            <if test="to_name!=null and to_name!=''">
+                and a.to_name='北京南'
+            </if>
+            <if test="begin_date!=null and begin_date!=''">
+                and a.date between #{begin_date} and #{end_date}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryTicket1" resultType="java.util.Map">
+        <include refid="queryTicket"/>
+
+        <where>
+            <if test="from_name!=null and from_name!=''">
+                and a.from_name='上海虹桥'
+            </if>
+            <if test="to_name!=null and to_name!=''">
+                and a.to_name='北京南'
+            </if>
+            <if test="begin_date!=null and begin_date!=''">
+                and a.date between #{begin_date} and #{end_date}
+            </if>
+        </where>
+    </select>
+</mapper>

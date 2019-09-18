@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heheda.ticket.web.dao.user.UserDao">
+
+
+    <resultMap id="UserPO" type="com.heheda.ticket.web.vo.user.UserVO">
+        <id column="u_id" property="u_id"></id>
+        <result column="u_name" property="u_name"></result>
+        <result column="u_pwd" property="u_pwd"></result>
+        <result column="last_ip" property="last_ip"></result>
+        <result column="salt" property="salt"></result>
+    </resultMap>
+    <!--保存用户-->
+    <insert id="saveUser" keyProperty="u_id" useGeneratedKeys="true">
+         INSERT INTO tb_user(u_name,u_pwd,salt,last_ip) VALUES
+         (
+           #{u_name},#{u_pwd},#{salt},#{last_ip}
+         )
+    </insert>
+
+
+    <select id="queryUser" resultMap="UserPO">
+        select u_id,u_name,u_pwd,salt,last_ip from tb_user
+        <where>
+            <if test="u_id!=null and u_id!=''">
+                and u_id=#{u_id}
+            </if>
+            <if test="u_name!=null and u_name!=''">
+                and u_name=#{u_name}
+            </if>
+            <if test="u_pwd!=null and u_pwd!=''">
+                and u_pwd=#{u_pwd}
+            </if>
+        </where>
+    </select>
+
+    <select id="checkUserByU_name" resultType="java.lang.Integer">
+        select count(1) from tb_user where u_name=#{u_name}
+    </select>
+</mapper>
